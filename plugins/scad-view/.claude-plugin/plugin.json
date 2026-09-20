@@ -2,7 +2,7 @@
   "name": "scad-view",
   "displayName": "Scaid live view",
   "description": "Opens a browser tab that watches this project's folder and builds whichever .scad file you saved last — spin it, cut it open, measure it. Nothing is uploaded; the page reads the files off disk.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Kent Safranski"
   },

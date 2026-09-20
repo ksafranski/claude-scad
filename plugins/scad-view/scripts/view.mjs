@@ -32,9 +32,14 @@ function flag(name) {
 /**
  * Where Scaid is.
  *
- * A `${...}` still in the string means a substitution didn't happen — the skill passes the
- * plugin's setting through one — so it falls through to the environment rather than building
- * a URL that can't exist.
+ * The setting arrives as CLAUDE_PLUGIN_OPTION_HOST, which is how Claude Code hands a
+ * plugin's userConfig to the processes it starts. It is deliberately NOT passed as an
+ * argument: `${user_config.host}` is not substituted in a skill or hook command, and a shell
+ * handed that literal fails outright with "bad substitution" — which takes the whole command
+ * down with it, silently, before node ever runs.
+ *
+ * `--url` remains for running this by hand. The `${` check is what stops a stray
+ * unsubstituted placeholder from becoming a URL that cannot exist.
  */
 function host() {
   const given = flag("url");

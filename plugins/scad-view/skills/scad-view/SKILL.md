@@ -3,7 +3,7 @@ description: Show an OpenSCAD file as a 3D model beside the conversation — spi
 argument-hint: "[path/to/file.scad]"
 ---
 
-!`node "${CLAUDE_PLUGIN_ROOT}/scripts/view.mjs" --url "${user_config.host}" $ARGUMENTS`
+!`node "${CLAUDE_PLUGIN_ROOT}/scripts/view.mjs" $ARGUMENTS`
 
 Open the `URL:` line above in the built-in browser pane, not the user's own browser — this
 belongs beside the conversation. Use whichever browser tool this session has for opening a

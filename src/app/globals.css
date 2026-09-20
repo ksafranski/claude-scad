@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dark studio: the workspace recedes so the model is the brightest thing on screen. */
+  --color-ink-950: #080a0f;
+  --color-ink-900: #0b0e14;
+  --color-ink-850: #11151e;
+  --color-ink-800: #161b26;
+  --color-ink-700: #1e2533;
+  --color-ink-600: #2a3345;
+  --color-ink-500: #3d4759;
+
+  --color-mist-100: #e8ecf5;
+  --color-mist-300: #aab4c7;
+  --color-mist-500: #6b7689;
+
+  --color-volt-300: #a78bfa;
+  --color-volt-400: #8b6dff;
+  /* Deep enough that white text on it clears WCAG AA (4.93:1); #7c5cff was 4.35. */
+  --color-volt-500: #7350fa;
+  --color-volt-600: #6a46f5;
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-ink-900);
+  color: var(--color-mist-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings and UI labels carry the personality; body text stays highly readable. */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-volt-400);
+  outline-offset: 2px;
+}
+
+/*
+ * The code editor is a transparent textarea filling its whole frame, so the usual focus ring
+ * lights up the entire editor border. The blinking caret already signals focus there.
+ */
+textarea[data-code-editor]:focus,
+textarea[data-code-editor]:focus-visible {
+  outline: none;
+}
+
+/*
+ * The spec document takes focus when it opens, so Escape and the scroll keys act on it
+ * rather than on the studio behind it. It's a page of content at that point rather than a
+ * control, and the ring would simply outline the whole window.
+ */
+[data-spec-document]:focus-visible {
+  outline: none;
+}
+
+@layer base {
+  /*
+   * Tailwind v4 leaves buttons on the browser default of `cursor: default` (v3 set `pointer`).
+   * Anything you can press should look pressable, and anything you can't should say so.
+   */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  label:has(> input[type="file"]),
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  input[type="range"] {
+    cursor: grab;
+  }
+}
+
+/* Dark surfaces need their own scrollbars or you get bright default gutters. */
+@layer base {
+  * {
+    scrollbar-color: var(--color-ink-600) transparent;
+    scrollbar-width: thin;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.3s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+}
+
+/*
+ * A highlight travelling across text that's mid-task.
+ *
+ * The gradient is painted through the glyphs themselves rather than behind them, so it reads
+ * as light moving over the words instead of a bar sliding under them. The band is narrow and
+ * most of the gradient sits at the resting color, which keeps the line legible the whole way
+ * through — this runs for the length of a build, so it has to be calm enough to read.
+ */
+@keyframes sweep {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+.animate-sweep {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-mist-300) 0%,
+    var(--color-mist-300) 38%,
+    var(--color-mist-100) 48%,
+    var(--color-volt-300) 52%,
+    var(--color-mist-300) 62%,
+    var(--color-mist-300) 100%
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: sweep 2.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The gradient has to go with the animation, or the text keeps whatever color the sweep
+     happened to leave under it. */
+  .animate-sweep {
+    animation: none;
+    background-image: none;
+    color: var(--color-mist-300);
+  }
+}

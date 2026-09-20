@@ -1,0 +1,31 @@
+{
+  "name": "claude-scad",
+  "version": "0.2.0",
+  "private": true,
+  "description": "A 3D viewer for the OpenSCAD files Claude Code writes, and the plugin that opens it.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@google/model-viewer": "^4.3.1",
+    "@phosphor-icons/react": "^2.1.10",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

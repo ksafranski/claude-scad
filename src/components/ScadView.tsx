@@ -76,7 +76,7 @@ export function ScadView() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-ink-900">
       <header className="flex shrink-0 items-center gap-4 border-b border-ink-700 bg-ink-850 px-4 py-2.5">
-        <Link href="/" aria-label="Scaid" className="shrink-0 opacity-70 transition hover:opacity-100">
+        <Link href="/" aria-label="Claude SCAD" className="shrink-0 opacity-70 transition hover:opacity-100">
           <Logo size={20} withWordmark={false} />
         </Link>
 

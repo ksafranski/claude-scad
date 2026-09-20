@@ -2,16 +2,25 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { Eye, FileCode, Question, SidebarSimple, Sparkle, X } from "@phosphor-icons/react";
+import {
+  DownloadSimple,
+  Eye,
+  FileCode,
+  Question,
+  SidebarSimple,
+  Sparkle,
+  X,
+} from "@phosphor-icons/react";
 import { CodeEditor } from "./CodeEditor";
 import { Logo } from "./Logo";
 import { ModelViewer } from "./ModelViewer";
 import { PlateSizePicker } from "./PrintControls";
 import { ScadViewConnect } from "./ScadViewConnect";
-import { WorkingOverlay } from "./Working";
+import { WorkingOverlay, WorkingText } from "./Working";
 import { useScadRenderer } from "@/hooks/useScadRenderer";
 import { useScadSource } from "@/hooks/useScadSource";
 import { usePanelWidth } from "@/hooks/usePanelWidth";
+import { downloadBlob, renderStl, toFileName } from "@/lib/exportStl";
 import { DEFAULT_SETTINGS, normalizePlateSize } from "@/lib/types";
 
 const PLATE_KEY = "scaid.scadView.plateSizeMm";
@@ -41,6 +50,8 @@ export function ScadView() {
   const [plateSizeMm, setPlateSizeMm] = usePlateSize();
   const [codeOpen, setCodeOpen] = useCodeOpen();
   const [showHelp, setShowHelp] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const { width: panelWidth, handleProps } = usePanelWidth(WIDTH_KEY);
 
   const source = useScadSource();
@@ -68,6 +79,31 @@ export function ScadView() {
       : null;
 
   const showing = code !== null;
+
+  /**
+   * Writes the model to an STL and hands it to the browser.
+   *
+   * Compiled again rather than taken from the mesh already on screen, for two reasons: it's
+   * OpenSCAD's own exporter rather than a second implementation, and the mesh in the viewer
+   * is whatever is being *looked* at — with a cut open, that's a model with a slice missing,
+   * which is not the thing anybody wants to print.
+   */
+  async function downloadStl() {
+    if (!code || exporting) return;
+    setExporting(true);
+    setExportError(null);
+    try {
+      const stl = await renderStl(code);
+      downloadBlob(
+        new Blob([stl as BlobPart], { type: "model/stl" }),
+        toFileName(source.name?.replace(/\.scad$/i, "") ?? "model", "stl"),
+      );
+    } catch {
+      setExportError("That didn't build, so there's nothing to save yet.");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   // With nothing to show, the panel holds the instructions and has to be open — an empty
   // viewer and no way in would be a dead end.
@@ -108,6 +144,22 @@ export function ScadView() {
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <PlateSizePicker plateSizeMm={plateSizeMm} onChange={setPlateSizeMm} />
+
+          {showing && (
+            <button
+              onClick={downloadStl}
+              disabled={exporting || isRendering}
+              title={exportError ?? "Save the whole model as an STL"}
+              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
+                exportError
+                  ? "border-amber-500/60 text-amber-400"
+                  : "border-ink-700 text-mist-300 hover:border-ink-600 hover:text-mist-100"
+              } disabled:cursor-default disabled:opacity-50`}
+            >
+              <DownloadSimple size={14} weight="duotone" />
+              {exporting ? <WorkingText>Saving…</WorkingText> : "STL"}
+            </button>
+          )}
 
           {showing && (
             <button

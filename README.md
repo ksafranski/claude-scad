@@ -32,6 +32,11 @@ Refreshing is a fragment change rather than a page load, so the model swaps **in
 nine megabytes of OpenSCAD WebAssembly stay warm and the camera stays exactly where you left
 it.
 
+**STL** saves the same way. The button compiles the program again with OpenSCAD's own
+exporter and hands the browser the bytes — no upload, no round trip, and because it works
+from the source rather than the mesh on screen, a cut you have open doesn't end up in the
+file you print.
+
 ## Watching a file instead
 
 If something other than Claude is doing the editing, the viewer can hold a file and rebuild on
@@ -62,6 +67,7 @@ database — the whole app is two static pages and a WebAssembly build of OpenSC
 | `plugins/scad-view/skills/scad-view/SKILL.md` | The `/scad-view` command |
 | `src/app/scad-view/page.tsx` | The page, static and server-free |
 | `src/lib/scadFragment.ts` | Unpacks the program in the browser, via `DecompressionStream` |
+| `src/lib/exportStl.ts` | Compiles to binary STL in a throwaway worker and saves it |
 | `src/hooks/useScadSource.ts` | Listens for `hashchange`, so a rebuild never reloads the page |
 | `src/hooks/useScadRenderer.ts` | Compiles OpenSCAD in a Web Worker and measures what came out |
 | `src/components/ModelViewer.tsx` | The viewer: orbiting, sectioning, and measurement with corner snapping |

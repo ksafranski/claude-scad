@@ -206,6 +206,31 @@ if (!code) {
   process.exit(0);
 }
 
+/**
+ * Is the viewer actually there?
+ *
+ * Worth the round trip on this path, because the failure it catches is silent otherwise: a
+ * mistyped address still produces a perfectly well-formed link, and the first sign anything
+ * is wrong would be a page that won't load, with nothing to say why. Only the slash command
+ * pays for this — the hook fires on every file save and can't afford it.
+ */
+let up = false;
+try {
+  const response = await fetch(`${at}/scad-view`, {
+    method: "HEAD",
+    signal: AbortSignal.timeout(4_000),
+  });
+  up = response.ok;
+} catch {
+  up = false;
+}
+
+if (!up) {
+  console.log(`The viewer isn't answering at ${at}.`);
+  console.log("Start it, or change the address with: /plugin config scad-view@claude-scad");
+  process.exit(0);
+}
+
 markOpen(process.cwd());
 
 const url = viewUrl(at, file, code);

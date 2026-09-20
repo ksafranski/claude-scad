@@ -1,7 +1,6 @@
 ---
-description: Open the Scaid live view on an OpenSCAD file — a 3D model of it, beside the conversation, that can be spun, cut open and measured. Use when the user asks to see, view or preview a model, or types /scad-view.
+description: Show an OpenSCAD file as a 3D model beside the conversation — spin and zoom it, cut it open along any axis, measure surface to surface, save it as an STL. Use whenever the user asks to see, view, preview, look at, check or inspect a model or a .scad file, whenever they ask how big something is or whether it will print, and whenever you have just written OpenSCAD they haven't seen yet. Takes an optional path; defaults to the most recently edited .scad in the project.
 argument-hint: "[path/to/file.scad]"
-disable-model-invocation: true
 ---
 
 !`node "${CLAUDE_PLUGIN_ROOT}/scripts/view.mjs" --url "${user_config.host}" $ARGUMENTS`

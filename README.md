@@ -9,9 +9,14 @@ straight off the surface — beside the conversation, updating as you work.
 /scad-view
 ```
 
-That's the whole setup. `/scad-view` finds the most recently edited `.scad` in the project —
-or takes a path, as `/scad-view parts/lid.scad` — and opens it in Claude Code's built-in
-browser pane. Every `.scad` Claude writes from then on refreshes that pane on its own.
+That's the whole setup, and after it there's nothing to remember. The first time Claude
+writes an OpenSCAD file in a project it opens the viewer by itself and tells you what's
+there; every `.scad` it writes after that refreshes the same pane. Asking to see, measure or
+check a model works too — Claude knows what the viewer is for.
+
+`/scad-view` is still there for opening it yourself, and takes an optional path:
+`/scad-view parts/lid.scad`. With no argument it picks the most recently edited `.scad` in
+the project.
 
 ## The program travels in the URL
 

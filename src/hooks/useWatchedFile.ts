@@ -172,8 +172,15 @@ export function useWatchedFile(path: string | null): WatchedFile {
     };
   }, [granted]);
 
+  /**
+   * Open the file dialog.
+   *
+   * Deliberately doesn't need a `path`. One arrives with a fragment, and is what lets the
+   * handle be remembered and checked against — but somebody who opens this page cold has no
+   * fragment, and refusing to open a dialog for them made the only button on screen do
+   * nothing at all.
+   */
   const choose = useCallback(async () => {
-    if (!path) return;
     try {
       const [handle] = await (window as unknown as Picker).showOpenFilePicker({
         id: "scaid-scad-view",
@@ -190,9 +197,12 @@ export function useWatchedFile(path: string | null): WatchedFile {
       setName(handle.name);
       setCode(null);
       setError(null);
-      setMismatch(handle.name === basename(path) ? null : basename(path));
+      // Only meaningful when something said which file this was supposed to be.
+      setMismatch(path && handle.name !== basename(path) ? basename(path) : null);
       setGranted(true);
-      void rememberFile(path, handle);
+      // Remembering is keyed by path, so a file picked without one is used but not stored.
+      // It still works; it just won't be waiting next time.
+      if (path) void rememberFile(path, handle);
     } catch {
       // Dismissing the dialog is a decision, not a failure.
     }
@@ -230,7 +240,6 @@ export function useWatchedFile(path: string | null): WatchedFile {
   }, [path]);
 
   const forget = useCallback(async () => {
-    if (!path) return;
     handleRef.current = null;
     seenRef.current = null;
     setGranted(false);
@@ -238,7 +247,7 @@ export function useWatchedFile(path: string | null): WatchedFile {
     setCode(null);
     setMismatch(null);
     setError(null);
-    await forgetFile(path);
+    if (path) await forgetFile(path);
   }, [path]);
 
   const state: Watching = !canWatch
